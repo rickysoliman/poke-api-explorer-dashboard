@@ -15,7 +15,7 @@ export default function Card({ pokemonData }: CardProps) {
         alt={pokemonData.name}
       />
       <p className={styles.info}>Height: {`${pokemonData.height} dm`}</p>
-      <p className={styles.info}>Weight: {`${pokemonData.weight} lbs`}</p>
+      <p className={styles.info}>Weight: {`${pokemonData.weight} hg`}</p>
     </div>
   );
 }
