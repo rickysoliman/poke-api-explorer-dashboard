@@ -1,35 +1,34 @@
 "use client";
 import React, { useState } from "react";
+import styles from "./search-bar.module.css";
 
 interface SearchBarProps {
   onSearch: (pokemonName: string) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [inputValue, setInputValue] = useState("");
+export default function SearchBar({ onSearch }: SearchBarProps) {
+  const [input, setInput] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputValue.trim()) {
-      onSearch(inputValue.trim());
-      setInputValue("");
+    if (input.trim()) {
+      onSearch(input);
+      setInput("");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="search-bar">
+    <form className={styles.searchBar} onSubmit={handleSearch}>
       <input
+        className={styles.input}
         type="text"
-        placeholder="Enter Pokémon name"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        className="text-input"
+        placeholder="Search for a Pokémon..."
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
       />
-      <button type="submit" className="submit-button">
+      <button className={styles.button} type="submit">
         Search
       </button>
     </form>
   );
-};
-
-export default SearchBar;
+}

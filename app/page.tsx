@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
 import SearchBar from "./components/search-bar";
+import Card from "./components/card";
 import { Pokemon } from "./types/pokemon";
+import styles from "./page.module.css";
 
 export default function Home() {
   const [pokemonData, setPokemonData] = useState<Pokemon | null>(null);
@@ -24,20 +26,10 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className={styles.container}>
       <SearchBar onSearch={(pokemonName) => search(pokemonName)} />
-      {error && <div className="error-message">{error}</div>}
-      {pokemonData && (
-        <div>
-          <h2>{pokemonData.name}</h2>
-          <img
-            src={pokemonData.sprites.front_default || ""}
-            alt={pokemonData.name}
-          />
-          <p>Height: {pokemonData.height}</p>
-          <p>Weight: {pokemonData.weight}</p>
-        </div>
-      )}
-    </>
+      {error && <div className={styles.errorMessage}>{error}</div>}
+      {pokemonData && <Card pokemonData={pokemonData} />}
+    </div>
   );
 }

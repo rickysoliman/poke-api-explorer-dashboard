@@ -1,17 +1,22 @@
 import React from "react";
+import { Pokemon } from "../types/pokemon";
+import styles from "./card.module.css";
 
 interface CardProps {
-  name: string;
-  url: string;
+  pokemonData: Pokemon;
 }
 
-const Card: React.FC<CardProps> = ({ name, url }) => {
+export default function Card({ pokemonData }: CardProps) {
   return (
-    <div className="card">
-      <img src={url} alt={name} className="card-image" />
-      <h2 className="card-title">{name}</h2>
+    <div className={styles.card}>
+      <h2 className={styles.name}>{pokemonData.name}</h2>
+      <img
+        className={styles.image}
+        src={pokemonData.sprites.front_default || ""}
+        alt={pokemonData.name}
+      />
+      <p className={styles.info}>Height: {pokemonData.height}</p>
+      <p className={styles.info}>Weight: {pokemonData.weight}</p>
     </div>
   );
-};
-
-export default Card;
+}
