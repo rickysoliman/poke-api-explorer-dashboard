@@ -1,14 +1,25 @@
 .container {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-self: center;
   padding: 2rem;
-  background: linear-gradient(180deg, #eaf4ff 0%, #ffffff 60%);
-  gap: 20px;
+  transition: background 0.4s ease-in-out;
   font-family: system-ui, -apple-system, sans-serif;
+}
+
+.dynamicBackground {
+  animation: fadeBg 0.4s ease-in-out;
+}
+
+@keyframes fadeBg {
+  from {
+    filter: brightness(0.95);
+  }
+  to {
+    filter: brightness(1);
+  }
 }
 
 .errorMessage {
