@@ -8,6 +8,9 @@ import styles from "./page.module.css";
 export default function Home() {
   const [pokemonData, setPokemonData] = useState<Pokemon | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [bgIndex, setBgIndex] = useState(0);
+  const [colorsA, setColorsA] = useState(["#ffffff", "#ffffff"]);
+  const [colorsB, setColorsB] = useState(["#ffffff", "#ffffff"]);
 
   const typeGradients: Record<string, string[]> = {
     grass: ["#eefdf0", "#b8e89c"],
@@ -30,24 +33,24 @@ export default function Home() {
     normal: ["#fafafa", "#cfcfcf"],
   };
 
-  const getBackground = () => {
-    if (!pokemonData) return styles.container;
-
-    const primaryType = pokemonData.types?.[0]?.type?.name;
-    const colors = typeGradients[primaryType];
-
-    if (!colors) return styles.container;
-
-    return `${styles.container} ${styles.dynamicBackground}`;
-  };
-
-  const search = async (pokemonName: string) => {
+  const search = async (name: string) => {
     try {
-      const url = `https://pokeapi.co/api/v2/pokemon/${pokemonName.toLowerCase()}`;
+      const url = `https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`;
       const response = await fetch(url);
-      if (!response.ok) throw new Error("Failed to fetch data");
-
+      if (!response.ok) throw new Error("x");
       const data: Pokemon = await response.json();
+
+      const type = data.types[0].type.name;
+      const newColors = typeGradients[type];
+
+      if (bgIndex === 0) {
+        setColorsB(newColors);
+        setBgIndex(1);
+      } else {
+        setColorsA(newColors);
+        setBgIndex(0);
+      }
+
       setPokemonData(data);
       setError(null);
     } catch {
@@ -57,21 +60,27 @@ export default function Home() {
   };
 
   return (
-    <div
-      className={getBackground()}
-      style={
-        pokemonData
-          ? {
-              background: `linear-gradient(180deg, ${
-                typeGradients[pokemonData.types[0].type.name][0]
-              } 0%, ${typeGradients[pokemonData.types[0].type.name][1]} 70%)`,
-            }
-          : {}
-      }
-    >
-      <SearchBar onSearch={(pokemonName) => search(pokemonName)} />
-      {error && <div className={styles.errorMessage}>{error}</div>}
-      {pokemonData && <Card pokemonData={pokemonData} />}
+    <div className={styles.wrapper}>
+      <div
+        className={`${styles.bgLayer} ${bgIndex === 0 ? styles.visible : ""}`}
+        style={{
+          ["--start" as any]: colorsA[0],
+          ["--end" as any]: colorsA[1],
+        }}
+      />
+      <div
+        className={`${styles.bgLayer} ${bgIndex === 1 ? styles.visible : ""}`}
+        style={{
+          ["--start" as any]: colorsB[0],
+          ["--end" as any]: colorsB[1],
+        }}
+      />
+
+      <div className={styles.content}>
+        <SearchBar onSearch={search} />
+        {error && <div className={styles.errorMessage}>{error}</div>}
+        {pokemonData && <Card pokemonData={pokemonData} />}
+      </div>
     </div>
   );
 }
