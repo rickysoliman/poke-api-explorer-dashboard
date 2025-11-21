@@ -79,7 +79,7 @@ export default function Home() {
       <div className={styles.content}>
         <SearchBar onSearch={search} />
         {error && <div className={styles.errorMessage}>{error}</div>}
-        {pokemonData && <Card pokemonData={pokemonData} />}
+        {pokemonData && <Card key={pokemonData.id} pokemonData={pokemonData} />}
       </div>
     </div>
   );
