@@ -9,8 +9,8 @@ export default function Home() {
   const [pokemonData, setPokemonData] = useState<Pokemon | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [bgIndex, setBgIndex] = useState(0);
-  const [colorsA, setColorsA] = useState(["#ffffff", "#ffffff"]);
-  const [colorsB, setColorsB] = useState(["#ffffff", "#ffffff"]);
+  const [colorsA, setColorsA] = useState(["#ffffff", "#ffffff", "#ffffff"]);
+  const [colorsB, setColorsB] = useState(["#ffffff", "#ffffff", "#ffffff"]);
 
   const typeGradients: Record<string, string[]> = {
     grass: ["#eefdf0", "#b8e89c"],
@@ -40,8 +40,17 @@ export default function Home() {
       if (!response.ok) throw new Error("x");
       const data: Pokemon = await response.json();
 
-      const type = data.types[0].type.name;
-      const newColors = typeGradients[type];
+      const type1 = data.types[0].type.name;
+      const type2 = data.types[1]?.type.name;
+
+      const type1Colors = typeGradients[type1];
+
+      let newColors = [...type1Colors, type1Colors[1]];
+
+      if (type2) {
+        const type2Colors = typeGradients[type2];
+        newColors = [type1Colors[0], type1Colors[1], type2Colors[1]];
+      }
 
       if (bgIndex === 0) {
         setColorsB(newColors);
@@ -65,14 +74,16 @@ export default function Home() {
         className={`${styles.bgLayer} ${bgIndex === 0 ? styles.visible : ""}`}
         style={{
           ["--start" as any]: colorsA[0],
-          ["--end" as any]: colorsA[1],
+          ["--end-1" as any]: colorsA[1],
+          ["--end-2" as any]: colorsA[2],
         }}
       />
       <div
         className={`${styles.bgLayer} ${bgIndex === 1 ? styles.visible : ""}`}
         style={{
           ["--start" as any]: colorsB[0],
-          ["--end" as any]: colorsB[1],
+          ["--end-1" as any]: colorsB[1],
+          ["--end-2" as any]: colorsB[2],
         }}
       />
 

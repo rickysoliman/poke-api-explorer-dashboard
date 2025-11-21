@@ -9,7 +9,12 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(180deg, var(--start) 0%, var(--end) 70%);
+  background: linear-gradient(
+    180deg,
+    var(--start) 0%,
+    var(--end-1) 50%,
+    var(--end-2) 100%
+  );
   opacity: 0;
   transition: opacity 0.6s ease-in-out;
 }
