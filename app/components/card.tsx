@@ -153,8 +153,6 @@ export default function Card({ pokemonData }: CardProps) {
         <div className={styles.card}>
           <h2 className={styles.name}>{pokemonData.name}</h2>
 
-          <img className={styles.sprite} src={sprite} alt={pokemonData.name} />
-
           <AccordionSection title="General Information" defaultOpen={true}>
             <p className={styles.info}>ID: {pokemonData.id}</p>
             <p className={styles.info}>Types: {types}</p>
@@ -195,6 +193,7 @@ export default function Card({ pokemonData }: CardProps) {
       {isModalOpen && (
         <SpeciesModal
           pokemonName={pokemonData.name}
+          pokemonSprite={pokemonData.sprites.front_default || ""}
           speciesData={speciesData}
           isLoading={isLoading}
           speciesError={speciesError}
