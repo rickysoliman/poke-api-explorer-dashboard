@@ -60,8 +60,9 @@
 
 .section {
   width: 100%;
-  margin-top: 12px;
-  padding-top: 10px;
+  margin-top: 4px;
+  padding-top: 8px;
+  padding-bottom: 4px;
   border-top: 1px solid #e2e2e2;
 }
 
@@ -71,6 +72,36 @@
   margin-bottom: 6px;
   font-weight: 600;
   color: #333;
+  cursor: pointer;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+.indicator {
+  margin-right: 8px;
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.content {
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease;
+}
+
+.contentClosed {
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  padding-bottom: 0;
+}
+
+.contentOpen {
+  max-height: 500px;
+  opacity: 1;
+  visibility: visible;
+  padding-top: 4px;
 }
 
 .list {

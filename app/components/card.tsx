@@ -1,5 +1,37 @@
+import { useState, ReactNode } from "react";
 import { Pokemon } from "../types/pokemon";
 import styles from "./card.module.css";
+
+interface AccordionSectionProps {
+  title: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}
+
+const AccordionSection = ({
+  title,
+  children,
+  defaultOpen = false,
+}: AccordionSectionProps) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <div className={styles.section}>
+      <h3 className={styles.subheading} onClick={() => setIsOpen(!isOpen)}>
+        <span className={styles.indicator}>{isOpen ? "▼" : "►"}</span>
+        {title}
+      </h3>
+
+      <div
+        className={`${styles.content} ${
+          isOpen ? styles.contentOpen : styles.contentClosed
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
 
 const dmToFeetInches = (dm: number) => {
   const inchesTotal = dm * 3.93701;
@@ -51,21 +83,20 @@ export default function Card({ pokemonData }: CardProps) {
 
         <img className={styles.sprite} src={sprite} alt={pokemonData.name} />
 
-        <p className={styles.info}>ID: {pokemonData.id}</p>
-        <p className={styles.info}>Types: {types}</p>
-        <p className={styles.info}>
-          Base Experience: {pokemonData.base_experience}
-        </p>
+        <AccordionSection title="General Information" defaultOpen={true}>
+          <p className={styles.info}>ID: {pokemonData.id}</p>
+          <p className={styles.info}>Types: {types}</p>
+          <p className={styles.info}>
+            Base Experience: {pokemonData.base_experience}
+          </p>
+          <p className={styles.info}>
+            Height: {dmToFeetInches(pokemonData.height)}
+          </p>
+          <p className={styles.info}>Weight: {hgToLbs(pokemonData.weight)}</p>
+          <p className={styles.info}>Abilities: {abilities}</p>
+        </AccordionSection>
 
-        <p className={styles.info}>
-          Height: {dmToFeetInches(pokemonData.height)}
-        </p>
-        <p className={styles.info}>Weight: {hgToLbs(pokemonData.weight)}</p>
-
-        <p className={styles.info}>Abilities: {abilities}</p>
-
-        <div className={styles.section}>
-          <h3 className={styles.subheading}>Stats</h3>
+        <AccordionSection title="Stats">
           <ul className={styles.list}>
             {stats.map((s) => (
               <li key={s.name}>
@@ -73,16 +104,15 @@ export default function Card({ pokemonData }: CardProps) {
               </li>
             ))}
           </ul>
-        </div>
+        </AccordionSection>
 
-        <div className={styles.section}>
-          <h3 className={styles.subheading}>Moves</h3>
+        <AccordionSection title="Moves">
           <ul className={styles.list}>
             {moves.map((m) => (
               <li key={m}>{m}</li>
             ))}
           </ul>
-        </div>
+        </AccordionSection>
       </div>
     </div>
   );
