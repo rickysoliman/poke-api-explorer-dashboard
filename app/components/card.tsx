@@ -83,7 +83,7 @@ export default function Card({ pokemonData }: CardProps) {
 
         <img className={styles.sprite} src={sprite} alt={pokemonData.name} />
 
-        <AccordionSection title="General Information" defaultOpen={true}>
+        <AccordionSection title="General Information">
           <p className={styles.info}>ID: {pokemonData.order}</p>
           <p className={styles.info}>Types: {types}</p>
           <p className={styles.info}>
@@ -113,6 +113,8 @@ export default function Card({ pokemonData }: CardProps) {
             ))}
           </ul>
         </AccordionSection>
+
+        <button className={styles.speciesButton}>Get Species Data</button>
       </div>
     </div>
   );
