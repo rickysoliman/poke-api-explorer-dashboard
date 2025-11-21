@@ -84,7 +84,7 @@ export default function Card({ pokemonData }: CardProps) {
         <img className={styles.sprite} src={sprite} alt={pokemonData.name} />
 
         <AccordionSection title="General Information" defaultOpen={true}>
-          <p className={styles.info}>ID: {pokemonData.id}</p>
+          <p className={styles.info}>ID: {pokemonData.order}</p>
           <p className={styles.info}>Types: {types}</p>
           <p className={styles.info}>
             Base Experience: {pokemonData.base_experience}
