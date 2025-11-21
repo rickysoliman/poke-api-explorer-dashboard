@@ -68,6 +68,7 @@
   font-size: 26px;
   font-weight: 700;
   text-transform: capitalize;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 .sprite {
@@ -154,6 +155,7 @@
   cursor: pointer;
   transition: transform 0.1s ease, box-shadow 0.25s ease;
   white-space: nowrap;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 .speciesButton:hover {
