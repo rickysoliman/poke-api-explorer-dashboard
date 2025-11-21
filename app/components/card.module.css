@@ -26,7 +26,6 @@
   align-items: flex-start;
   justify-content: center;
   gap: 32px;
-  margin-top: 32px;
   width: 100%;
   padding: 0 2rem;
   box-sizing: border-box;
@@ -125,7 +124,7 @@
 }
 
 .contentOpen {
-  max-height: 500px;
+  max-height: 1500px;
   opacity: 1;
   visibility: visible;
   padding-top: 4px;
@@ -165,4 +164,27 @@
 .speciesButton:active {
   transform: translateY(0px);
   box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 0 1rem;
+    margin: 32px 0 64px 0;
+  }
+
+  .artworkContainer {
+    width: 80%;
+    max-width: 300px;
+    max-height: none;
+    order: 1;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 400px;
+    order: 2;
+  }
 }
