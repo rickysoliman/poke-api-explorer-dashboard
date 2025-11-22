@@ -29,6 +29,54 @@
   background: rgba(255, 255, 255, 0.8);
 }
 
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.label {
+  font-weight: bold;
+  color: #444;
+  font-size: 0.9rem;
+}
+
+.selectWrapper {
+  position: relative;
+}
+
+.select {
+  appearance: none;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 8px 35px 8px 15px;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.select:focus {
+  border-color: #666;
+}
+
+.selectWrapper::after {
+  content: "▼";
+  font-size: 0.7rem;
+  color: #666;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
 .imageWrapper {
   width: 100%;
   height: 120px;
@@ -69,7 +117,6 @@
   color: #333;
 }
 
-/* Pagination Styling */
 .pagination {
   display: flex;
   justify-content: center;
