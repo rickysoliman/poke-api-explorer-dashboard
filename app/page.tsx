@@ -33,9 +33,60 @@ export default function Home() {
     normal: ["#fafafa", "#cfcfcf"],
   };
 
+  const formatPokemonName = (name: string): string => {
+    let cleanName = name.toLowerCase().trim();
+
+    // 1. Handle Gender Symbols
+    if (cleanName.includes("♀")) cleanName = cleanName.replace(/♀/g, "-f");
+    if (cleanName.includes("♂")) cleanName = cleanName.replace(/♂/g, "-m");
+
+    // 2. Remove Special Characters (dots, apostrophes)
+    // Mr. Mime -> mr mime | Farfetch'd -> farfetchd
+    cleanName = cleanName.replace(/[.'`]/g, "");
+
+    // 3. Split into words to handle prefixes
+    // "Mega Charizard X" -> ["mega", "charizard", "x"]
+    let parts = cleanName.split(/[\s-]+/);
+
+    // 4. Define Prefix Mappings (User Input -> API Suffix)
+    const prefixMap: Record<string, string> = {
+      alolan: "alola",
+      galarian: "galar",
+      hisuian: "hisui",
+      paldean: "paldea",
+      gigantamax: "gmax",
+      mega: "mega",
+      primal: "primal",
+    };
+
+    // 5. Check if the first word is a known prefix
+    if (parts.length > 1 && prefixMap[parts[0]]) {
+      const originalPrefix = parts.shift()!; // Remove "mega" or "alolan"
+      const apiSuffix = prefixMap[originalPrefix];
+
+      // Handle Special Case: Mega X/Y (e.g., Mega Charizard X)
+      // If we have 2 parts left (["charizard", "x"]), we need to inject "mega" in the middle
+      if (
+        originalPrefix === "mega" &&
+        parts.length === 2 &&
+        (parts[1] === "x" || parts[1] === "y")
+      ) {
+        // Result: charizard-mega-x
+        parts.splice(1, 0, apiSuffix);
+      } else {
+        // Standard Case: Alolan Raichu -> raichu-alola
+        parts.push(apiSuffix);
+      }
+    }
+
+    // 6. Rejoin with dashes
+    return parts.join("-");
+  };
+
   const search = async (name: string) => {
+    const cleanName = formatPokemonName(name);
     try {
-      const url = `https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`;
+      const url = `https://pokeapi.co/api/v2/pokemon/${cleanName}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error("x");
       const data: Pokemon = await response.json();
