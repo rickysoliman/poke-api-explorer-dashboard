@@ -4,6 +4,7 @@ import SearchBar from "./components/search-bar";
 import PokemonDataView from "./components/pokemon-data-view";
 import { Pokemon } from "./types/pokemon";
 import styles from "./page.module.css";
+import ListView from "./components/list-view";
 
 export default function Home() {
   const [pokemonData, setPokemonData] = useState<Pokemon | null>(null);
@@ -119,6 +120,13 @@ export default function Home() {
     }
   };
 
+  const returnToListView = () => {
+    setPokemonData(null);
+    setColorsA(["#ffffff", "#ffffff", "#ffffff"]);
+    setColorsB(["#ffffff", "#ffffff", "#ffffff"]);
+    setError(null);
+  };
+
   return (
     <div className={styles.wrapper}>
       <div
@@ -139,11 +147,22 @@ export default function Home() {
       />
 
       <div className={styles.content}>
-        <SearchBar onSearch={search} />
+        <div className={styles.searchBarWrapper}>
+          <SearchBar onSearch={search} />
+          {pokemonData && (
+            <button
+              className={styles.returnToListButton}
+              onClick={() => returnToListView()}
+            >
+              Return to List View
+            </button>
+          )}
+        </div>
         {error && <div className={styles.errorMessage}>{error}</div>}
         {pokemonData && (
           <PokemonDataView key={pokemonData.id} pokemonData={pokemonData} />
         )}
+        {!pokemonData && <ListView pokemonData={undefined} />}
       </div>
     </div>
   );
