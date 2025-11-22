@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import SearchBar from "./components/search-bar";
-import Card from "./components/card";
+import PokemonDataView from "./components/pokemon-data-view";
 import { Pokemon } from "./types/pokemon";
 import styles from "./page.module.css";
 
@@ -141,7 +141,9 @@ export default function Home() {
       <div className={styles.content}>
         <SearchBar onSearch={search} />
         {error && <div className={styles.errorMessage}>{error}</div>}
-        {pokemonData && <Card key={pokemonData.id} pokemonData={pokemonData} />}
+        {pokemonData && (
+          <PokemonDataView key={pokemonData.id} pokemonData={pokemonData} />
+        )}
       </div>
     </div>
   );

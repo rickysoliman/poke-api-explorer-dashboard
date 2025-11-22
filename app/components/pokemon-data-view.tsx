@@ -1,6 +1,6 @@
 import { useState, ReactNode, useCallback } from "react";
 import { Pokemon, SpeciesData } from "../types/pokemon";
-import styles from "./card.module.css";
+import styles from "./pokemon-data-view.module.css";
 import SpeciesModal from "./species-modal";
 
 interface AccordionSectionProps {
@@ -46,11 +46,11 @@ const hgToLbs = (hg: number) => {
   return `${lbs.toFixed(1)} lbs`;
 };
 
-interface CardProps {
+interface PokemonDataViewProps {
   pokemonData: Pokemon;
 }
 
-export default function Card({ pokemonData }: CardProps) {
+export default function PokemonDataView({ pokemonData }: PokemonDataViewProps) {
   // State for the Species Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [speciesData, setSpeciesData] = useState<SpeciesData | null>(null);
