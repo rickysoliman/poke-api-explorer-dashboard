@@ -84,6 +84,10 @@ export default function Home() {
     return parts.join("-");
   };
 
+  const handleListViewSelect = (name: string) => {
+    search(name);
+  };
+
   const search = async (name: string) => {
     const cleanName = formatPokemonName(name);
     try {
@@ -162,7 +166,7 @@ export default function Home() {
         {pokemonData && (
           <PokemonDataView key={pokemonData.id} pokemonData={pokemonData} />
         )}
-        {!pokemonData && <ListView pokemonData={undefined} />}
+        {!pokemonData && <ListView onSelect={handleListViewSelect} />}
       </div>
     </div>
   );
