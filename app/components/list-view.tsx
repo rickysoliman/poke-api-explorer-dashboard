@@ -11,30 +11,39 @@ interface PokemonSummary {
 
 interface ListViewProps {
   onSelect: (name: string) => void;
+  // State lifted from parent:
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  genIndex: number;
+  setGenIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 // Define the ID ranges for each generation
 const GENERATIONS = [
-  { name: "Gen 1", limit: 151, offset: 0 },
-  { name: "Gen 2", limit: 100, offset: 151 },
-  { name: "Gen 3", limit: 135, offset: 251 },
-  { name: "Gen 4", limit: 107, offset: 386 },
-  { name: "Gen 5", limit: 156, offset: 493 },
-  { name: "Gen 6", limit: 72, offset: 649 },
-  { name: "Gen 7", limit: 88, offset: 721 },
-  { name: "Gen 8", limit: 96, offset: 809 },
-  { name: "Gen 9", limit: 120, offset: 905 },
+  { name: "Gen 1 (Kanto)", limit: 151, offset: 0 },
+  { name: "Gen 2 (Johto)", limit: 100, offset: 151 },
+  { name: "Gen 3 (Hoenn)", limit: 135, offset: 251 },
+  { name: "Gen 4 (Sinnoh)", limit: 107, offset: 386 },
+  { name: "Gen 5 (Unova)", limit: 156, offset: 493 },
+  { name: "Gen 6 (Kalos)", limit: 72, offset: 649 },
+  { name: "Gen 7 (Alola)", limit: 88, offset: 721 },
+  { name: "Gen 8 (Galar)", limit: 96, offset: 809 },
+  { name: "Gen 9 (Paldea)", limit: 120, offset: 905 },
 ];
 
-export default function ListView({ onSelect }: ListViewProps) {
+export default function ListView({
+  onSelect,
+  page,
+  setPage,
+  genIndex,
+  setGenIndex,
+}: ListViewProps) {
   const [pokemonList, setPokemonList] = useState<PokemonSummary[]>([]);
-  const [page, setPage] = useState(1);
-  const [genIndex, setGenIndex] = useState(0); // Default to Gen 1
   const [isLoading, setIsLoading] = useState(false);
 
   const PAGE_SIZE = 20;
 
-  // Reset to page 1 whenever the generation changes
+  // Handles the generation change and resets the page state in the parent
   const handleGenChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setGenIndex(Number(e.target.value));
     setPage(1);
@@ -43,22 +52,19 @@ export default function ListView({ onSelect }: ListViewProps) {
   useEffect(() => {
     const fetchPage = async () => {
       setIsLoading(true);
+      setPokemonList([]); // Clear list while loading
+
       try {
         const currentGen = GENERATIONS[genIndex];
 
-        // Calculate where this specific page starts relative to the Generation's start
         const pageOffset = (page - 1) * PAGE_SIZE;
-
-        // The actual API offset is (Generation Start) + (Page Progress)
         const apiOffset = currentGen.offset + pageOffset;
 
-        // Smart Limit: Don't fetch past the end of the generation
-        // If we are near the end (e.g. needing 20 items but only 11 left in Gen 1), trim it.
         const remainingInGen = currentGen.limit - pageOffset;
         const fetchLimit = Math.min(PAGE_SIZE, remainingInGen);
 
         if (fetchLimit <= 0) {
-          setPokemonList([]);
+          setIsLoading(false);
           return;
         }
 
@@ -83,15 +89,15 @@ export default function ListView({ onSelect }: ListViewProps) {
         setPokemonList(formattedData);
       } catch (error) {
         console.error("Failed to fetch list", error);
+        setPokemonList([]);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchPage();
-  }, [page, genIndex]);
+  }, [page, genIndex, setPage, setGenIndex]); // Dependencies include the props
 
-  // Calculate total pages for the current generation for the "Next" button logic
   const totalPages = Math.ceil(GENERATIONS[genIndex].limit / PAGE_SIZE);
 
   return (
@@ -101,9 +107,10 @@ export default function ListView({ onSelect }: ListViewProps) {
         <label className={styles.label}>Select Generation:</label>
         <div className={styles.selectWrapper}>
           <select
-            value={genIndex}
+            value={genIndex} // Controlled by parent state
             onChange={handleGenChange}
             className={styles.select}
+            disabled={isLoading}
           >
             {GENERATIONS.map((gen, index) => (
               <option key={gen.name} value={index}>
@@ -123,7 +130,15 @@ export default function ListView({ onSelect }: ListViewProps) {
           >
             <div className={styles.imageWrapper}>
               {!isLoading && (
-                <img src={poke.imageUrl} alt={poke.name} loading="lazy" />
+                <img
+                  src={poke.imageUrl}
+                  alt={poke.name}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://placehold.co/100x100/CCCCCC/666666?text=No+Art";
+                  }}
+                />
               )}
             </div>
             <div className={styles.info}>
@@ -134,6 +149,13 @@ export default function ListView({ onSelect }: ListViewProps) {
             </div>
           </div>
         ))}
+        {isLoading &&
+          Array.from({ length: PAGE_SIZE }).map((_, i) => (
+            <div key={`skel-${i}`} className={styles.card}>
+              <div className={styles.skeletonImage}></div>
+              <div className={styles.skeletonInfo}></div>
+            </div>
+          ))}
       </div>
 
       {/* Pagination Controls */}

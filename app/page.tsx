@@ -13,6 +13,11 @@ export default function Home() {
   const [colorsA, setColorsA] = useState(["#ffffff", "#ffffff", "#ffffff"]);
   const [colorsB, setColorsB] = useState(["#ffffff", "#ffffff", "#ffffff"]);
 
+  // --- NEW STATE FOR PERSISTENCE ---
+  const [listPage, setListPage] = useState(1);
+  const [listGenIndex, setListGenIndex] = useState(0);
+  // ---------------------------------
+
   const typeGradients: Record<string, string[]> = {
     grass: ["#eefdf0", "#b8e89c"],
     fire: ["#ffe9e3", "#ff9d6e"],
@@ -42,11 +47,9 @@ export default function Home() {
     if (cleanName.includes("♂")) cleanName = cleanName.replace(/♂/g, "-m");
 
     // 2. Remove Special Characters (dots, apostrophes)
-    // Mr. Mime -> mr mime | Farfetch'd -> farfetchd
     cleanName = cleanName.replace(/[.'`]/g, "");
 
     // 3. Split into words to handle prefixes
-    // "Mega Charizard X" -> ["mega", "charizard", "x"]
     let parts = cleanName.split(/[\s-]+/);
 
     // 4. Define Prefix Mappings (User Input -> API Suffix)
@@ -62,20 +65,18 @@ export default function Home() {
 
     // 5. Check if the first word is a known prefix
     if (parts.length > 1 && prefixMap[parts[0]]) {
-      const originalPrefix = parts.shift()!; // Remove "mega" or "alolan"
+      const originalPrefix = parts.shift()!;
       const apiSuffix = prefixMap[originalPrefix];
 
-      // Handle Special Case: Mega X/Y (e.g., Mega Charizard X)
-      // If we have 2 parts left (["charizard", "x"]), we need to inject "mega" in the middle
+      // Handle Special Case: Mega X/Y
       if (
         originalPrefix === "mega" &&
         parts.length === 2 &&
         (parts[1] === "x" || parts[1] === "y")
       ) {
-        // Result: charizard-mega-x
         parts.splice(1, 0, apiSuffix);
       } else {
-        // Standard Case: Alolan Raichu -> raichu-alola
+        // Standard Case
         parts.push(apiSuffix);
       }
     }
@@ -85,6 +86,7 @@ export default function Home() {
   };
 
   const handleListViewSelect = (name: string) => {
+    // When a Pokemon is selected from the list, we search for it
     search(name);
   };
 
@@ -99,12 +101,12 @@ export default function Home() {
       const type1 = data.types[0].type.name;
       const type2 = data.types[1]?.type.name;
 
-      const type1Colors = typeGradients[type1];
+      const type1Colors = typeGradients[type1] || ["#ffffff", "#ffffff"];
 
       let newColors = [...type1Colors, type1Colors[1]];
 
       if (type2) {
-        const type2Colors = typeGradients[type2];
+        const type2Colors = typeGradients[type2] || ["#ffffff", "#ffffff"];
         newColors = [type1Colors[0], type1Colors[1], type2Colors[1]];
       }
 
@@ -125,7 +127,10 @@ export default function Home() {
   };
 
   const returnToListView = () => {
+    // This simply hides the PokemonDataView and shows the ListView.
+    // Since the list state is now in Home, it remains unchanged.
     setPokemonData(null);
+    // Reset background colors to neutral when returning to the list view
     setColorsA(["#ffffff", "#ffffff", "#ffffff"]);
     setColorsB(["#ffffff", "#ffffff", "#ffffff"]);
     setError(null);
@@ -133,6 +138,7 @@ export default function Home() {
 
   return (
     <div className={styles.wrapper}>
+      {/* Background Layers */}
       <div
         className={`${styles.bgLayer} ${bgIndex === 0 ? styles.visible : ""}`}
         style={{
@@ -156,17 +162,29 @@ export default function Home() {
           {pokemonData && (
             <button
               className={styles.returnToListButton}
-              onClick={() => returnToListView()}
+              onClick={returnToListView}
             >
               Return to List View
             </button>
           )}
         </div>
         {error && <div className={styles.errorMessage}>{error}</div>}
+
         {pokemonData && (
           <PokemonDataView key={pokemonData.id} pokemonData={pokemonData} />
         )}
-        {!pokemonData && <ListView onSelect={handleListViewSelect} />}
+
+        {!pokemonData && (
+          <ListView
+            onSelect={handleListViewSelect}
+            // --- PASSING STATE DOWN AS PROPS ---
+            page={listPage}
+            setPage={setListPage}
+            genIndex={listGenIndex}
+            setGenIndex={setListGenIndex}
+            // -----------------------------------
+          />
+        )}
       </div>
     </div>
   );
